@@ -17,7 +17,7 @@
     }
     .name-a{
       font-family:'Dancing Script',cursive; 
-      font-size: clamp(3.2rem, 12vw, 8rem);  /* 适配三个字 */
+      font-size: clamp(3.2rem, 12vw, 8rem);
       font-weight:700;
       line-height:1.2;
       background:linear-gradient(135deg,#ffe99c,#ffd1f9,#a7e0ff);
@@ -26,7 +26,7 @@
       letter-spacing:8px;
       margin-bottom:10px;
       filter:drop-shadow(0 10px 12px rgba(0,0,0,0.2));
-      white-space: nowrap;  /* 防止换行 */
+      white-space: nowrap;
     }
     .birthday-text{
       font-size:clamp(1.8rem,8vw,4rem); font-weight:600; letter-spacing:6px;
@@ -53,8 +53,7 @@
       position:absolute; bottom:18px; right:24px; color:rgba(255,255,255,0.5);
       font-size:0.9rem; z-index:15; pointer-events:none; text-shadow:0 0 8px black; font-style:italic;
     }
-    /* 小屏适配：如果三个字在极小屏上仍觉得大，可以再调小，但不换行 */
-    @media (max:width 480px){
+    @media (max-width:480px){
       .name-a{ font-size: 3rem; letter-spacing:4px; }
       .birthday-text{ padding:8px 18px; letter-spacing:3px; }
       .footer-note{ font-size:0.75rem; bottom:10px; right:16px; }
@@ -63,10 +62,7 @@
 </head>
 <body>
 
-<!-- 自动播放生日歌（隐藏播放器） -->
-<audio id="birthdaySong" loop hidden>
-  <source src="https://cdn.jsdelivr.net/gh/antoniskamamis/birthday-song/birthday.mp3" type="audio/mpeg">
-
+<audio id="bgm" loop>
 
 <canvas id="canvas-bg"></canvas>
 <div class="birthday-message">
@@ -78,6 +74,15 @@
 
 <script>
   (function(){
+    const audio = document.getElementById('bgm');
+    audio.src = 'https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_MP3.mp3';
+    
+    // 点击页面任意位置就播放
+    document.addEventListener('click', () => {
+      audio.play().catch(e => console.log(e));
+    }, { once: false });
+
+    // 原有气球动画
     const canvas=document.getElementById('canvas-bg'),ctx=canvas.getContext('2d');
     let particles=[],PARTICLE_COUNT=140,animationFrame=null,resizeTimer=null,dpr=window.devicePixelRatio||1;
     const rand=(min,max)=>Math.random()*(max-min)+min;
@@ -146,15 +151,6 @@
     function start(){
       resizeCanvas(); if(animationFrame) cancelAnimationFrame(animationFrame);
       animate(); window.addEventListener('resize',handleResize);
-      
-      // 页面加载后自动播放音乐
-      const audio = document.getElementById('birthdaySong');
-      audio.play().catch(err => {
-        // 浏览器限制自动播放时，点一下页面就播放
-        document.addEventListener('click', () => {
-          audio.play();
-        }, { once: true });
-      });
     }
     window.addEventListener('load',start);
     window.addEventListener('beforeunload',()=>{ if(animationFrame)cancelAnimationFrame(animationFrame); if(resizeTimer)clearTimeout(resizeTimer); });
