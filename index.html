@@ -6,6 +6,15 @@
   <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* 音乐启动遮罩样式 */
+    #start-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.8); z-index: 100;
+        display: flex; justify-content: center; align-items: center;
+        color: white; cursor: pointer; backdrop-filter: blur(5px);
+        font-family: 'Quicksand', sans-serif; font-size: 1.5rem;
+    }
+    
     *{ margin:0; padding:0; box-sizing:border-box; }
     body{ overflow:hidden; background:#0f0c1f; font-family:'Quicksand',sans-serif; }
     #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; pointer-events:none; }
@@ -61,6 +70,11 @@
   </style>
 </head>
 <body>
+  <audio id="bgm" loop preload="auto">
+    <source src="https://raw.githubusercontent.com/yangkz1208/yangtianlin/main/114514.mp3" type="audio/mpeg">
+  </audio>
+  <div id="start-overlay">✨ 点击屏幕，开启生日祝福 ✨</div>
+
   <canvas id="canvas-bg"></canvas>
   <div class="birthday-message">
     <div class="name-a">杨天琳(/^▽^)/</div>
@@ -68,8 +82,25 @@
     <div class="sub-greeting">✨ HAPPY BIRTHDAY ✨</div>
   </div>
   <div class="footer-note">🎈 愿你每一天都闪闪发光ヽ(*≧ω≦)ﾉ by杨凯哲</div>
+
   <script>
     (function(){
+      // 处理点击启动音乐
+      const overlay = document.getElementById('start-overlay');
+      const audio = document.getElementById('bgm');
+      
+      const startPlayback = () => {
+          audio.play();
+          overlay.style.display = 'none';
+      };
+      
+      overlay.addEventListener('click', startPlayback);
+      // 同时监听触摸事件防止移动端延迟
+      overlay.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startPlayback();
+      });
+
       const canvas = document.getElementById('canvas-bg');
       const ctx = canvas.getContext('2d');
       let particles = [];
