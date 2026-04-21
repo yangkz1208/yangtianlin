@@ -62,7 +62,10 @@
 </head>
 <body>
 
-<audio id="bgm" loop>
+<!-- 生日背景音乐 -->
+<audio id="birthdayMusic" loop>
+  <source src="https://files.catbox.moe/2y8z5d.mp3" type="audio/mpeg">
+
 
 <canvas id="canvas-bg"></canvas>
 <div class="birthday-message">
@@ -73,16 +76,13 @@
 <div class="footer-note">🎈 愿你每一天都闪闪发光ヽ(*≧ω≦)ﾉ</div>
 
 <script>
-  (function(){
-    const audio = document.getElementById('bgm');
-    audio.src = 'https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_MP3.mp3';
-    
-    // 点击页面任意位置就播放
-    document.addEventListener('click', () => {
-      audio.play().catch(e => console.log(e));
-    }, { once: false });
+  // 点击页面播放生日歌
+  document.addEventListener('click', function() {
+    const audio = document.getElementById('birthdayMusic');
+    audio.play().catch(e => {});
+  }, { once: false });
 
-    // 原有气球动画
+  (function(){
     const canvas=document.getElementById('canvas-bg'),ctx=canvas.getContext('2d');
     let particles=[],PARTICLE_COUNT=140,animationFrame=null,resizeTimer=null,dpr=window.devicePixelRatio||1;
     const rand=(min,max)=>Math.random()*(max-min)+min;
