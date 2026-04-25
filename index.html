@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
+  <title>🎂 杨天琳 · 生日快乐</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* 基础重置 */
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-    body { font-family: 'Quicksand', sans-serif; -webkit-tap-highlight-color: transparent; perspective: 2000px; }
+    body { font-family: 'Quicksand', 'Microsoft YaHei', sans-serif; -webkit-tap-highlight-color: transparent; perspective: 2000px; }
 
     /* 视频背景 */
     #video-bg {
@@ -31,21 +32,21 @@
         line-height: 1.6;
     }
 
-    /* 主界面文字块 - 添加 3D 支持 */
+    /* 主界面文字块 3D */
     .birthday-message {
       position: absolute; top: 50%; left: 50%; 
       transform: translate(-50%, -50%);
       text-align: center; color: white; z-index: 100; width: 100%;
       pointer-events: none; 
       transition: opacity 0.5s, filter 0.5s, transform 0.2s ease-out;
-      transform-style: preserve-3d; /* 开启 3D 空间 */
+      transform-style: preserve-3d;
     }
     
     .interactive-text { 
       pointer-events: auto; cursor: pointer; user-select: none; 
       -webkit-user-select: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: block; width: fit-content; margin: 0 auto;
-      transform: translateZ(50px); /* 让文字浮在背景前方 */
+      transform: translateZ(50px);
     }
     .interactive-text:active { transform: translateZ(20px) scale(0.9); filter: brightness(1.3); }
 
@@ -177,7 +178,6 @@
       let clickCount = 0;
       let lastClickTime = 0;
 
-      // 1. 启动逻辑
       overlay.addEventListener('click', () => {
           audio.play().catch(() => {});
           if(video) video.play();
@@ -185,20 +185,15 @@
           setTimeout(() => overlay.style.display = 'none', 500);
       });
 
-      // 2. 统一 3D 倾斜效果 (为主文字和卡片同时应用)
       function handleMove(e) {
           const clientX = e.touches ? e.touches[0].clientX : e.clientX;
           const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-          
           const x = (window.innerWidth / 2 - clientX) / 35;
           const y = (window.innerHeight / 2 - clientY) / 35;
 
-          // 为稀世卡片应用倾斜 (仅激活时)
           if (id5Card.classList.contains('active')) {
               id5Card.style.transform = `translate(-50%, -50%) rotateY(${-x}deg) rotateX(${y}deg)`;
           }
-          
-          // 为主界面文字应用倾斜 (仅可见时)
           if (mainUI.style.opacity !== "0") {
               mainUI.style.transform = `translate(-50%, -50%) rotateY(${-x}deg) rotateX(${y}deg)`;
           }
@@ -213,9 +208,9 @@
       window.addEventListener('touchmove', handleMove);
       window.addEventListener('touchend', resetMove);
 
-      // 3. 打字机特效
       function startTypewriter() {
-          const text = `愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style="opacity: 0.1; margin: 8px 0;"><small style="color: #d4af37;">YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！`;
+          // 对文案进行了标准字符确保处理
+          const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！";
           typewriterContent.innerHTML = "";
           let i = 0;
           const timer = setInterval(() => {
@@ -231,7 +226,6 @@
           }, 40);
       }
 
-      // 4. 星星反馈
       function createSparks(x, y) {
           for (let i = 0; i < 8; i++) {
               const spark = document.createElement('div');
@@ -248,7 +242,6 @@
           }
       }
 
-      // 5. 触发逻辑
       triggerBtns.forEach(btn => {
           btn.addEventListener('mousedown', (e) => {
               createSparks(e.clientX, e.clientY);
@@ -268,9 +261,12 @@
                   }, 400);
               }
           });
+          // 适配移动端点击
+          btn.addEventListener('touchstart', (e) => {
+              createSparks(e.touches[0].clientX, e.touches[0].clientY);
+          });
       });
 
-      // 6. 关闭卡片
       closeBtn.addEventListener('click', () => {
           id5Card.classList.remove('active');
           setTimeout(() => {
