@@ -6,22 +6,21 @@
   <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 1. 音乐启动遮罩 - 优化手机端点击响应 */
+    /* 原有启动遮罩 */
     #start-overlay {
         position: fixed; top:0; left:0; width:100%; height:100%;
         background: rgba(0,0,0,0.9); z-index: 3000;
         display: flex; justify-content: center; align-items: center;
         color: white; cursor: pointer; backdrop-filter: blur(8px);
         font-family: 'Quicksand', sans-serif; font-size: 1.5rem; text-align:center; padding:20px;
-        touch-action: none; /* 彻底禁止手势干扰 */
+        touch-action: none;
     }
     
     *{ margin:0; padding:0; box-sizing:border-box; }
     body{ overflow:hidden; background:#0f0c1f; font-family:'Quicksand',sans-serif; -webkit-tap-highlight-color: transparent; }
-    
     #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; z-index: 1; }
     
-    /* 2. 主界面文字层 */
+    /* 主界面文字层 */
     .birthday-message{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
       text-align:center; color:white; z-index:100;
@@ -31,11 +30,10 @@
     
     .interactive-text {
       pointer-events: auto; cursor: pointer; 
-      user-select: none; -webkit-user-select: none; /* 禁止手机长按选中 */
-      touch-action: manipulation; /* 核心优化：消除手机端 300ms 点击延迟 */
+      user-select: none; -webkit-user-select: none;
+      touch-action: manipulation;
       transition: transform 0.1s ease;
     }
-    /* 手机端点击时的触感反馈 */
     .interactive-text:active { transform: scale(0.92); filter: brightness(1.2); }
 
     .name-a{
@@ -57,56 +55,65 @@
       animation:glowPulse 2.5s infinite alternate;
     }
 
-    /* 3. 稀世时装卡片 - 优化小屏幕适配 */
+    /* 稀世时装大卡片 */
     #id5-card {
-      position: fixed; top: 50%; left: 50%; 
+      position: fixed; top: 48%; left: 50%; 
       transform: translate(-50%, -50%) scale(0.8);
       width: 90%; max-width: 350px; 
-      max-height: 85vh; /* 优化：防止长文案在小手机上超出屏幕 */
-      overflow-y: auto; /* 内容过多时允许内部滑动 */
+      max-height: 80vh; 
+      overflow-y: auto; 
       background: linear-gradient(145deg, #1a1a1c, #0a0a0b); 
       border: 2px solid #d4af37; border-radius: 15px; 
       z-index: 1000; opacity: 0; pointer-events: none;
       transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: flex; flex-direction: column; align-items: center;
-      box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
-      padding: 30px 20px; color: #f0f0f0; text-align: center;
-      scrollbar-width: none; /* 隐藏滚动条 */
+      box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
+      padding: 25px 20px; color: #f0f0f0; text-align: center;
+      scrollbar-width: none;
     }
     #id5-card::-webkit-scrollbar { display: none; }
-
-    #id5-card.active {
-      opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1);
-    }
+    #id5-card.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
     .rarity-tag {
       background: linear-gradient(90deg, #d4af37, #f7e695); color: #1a1a1a;
-      font-weight: 800; padding: 5px 25px; font-size: 0.9rem;
-      position: absolute; top: 20px; left: -10px;
+      font-weight: 800; padding: 4px 20px; font-size: 0.85rem;
+      position: absolute; top: 15px; left: -10px;
       transform: rotate(-5deg); box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
     }
 
-    .skin-title { margin-top: 45px; color: #d4af37; font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
-    .skin-icon { font-size: 4.5rem; margin: 15px 0; filter: drop-shadow(0 0 15px #d4af37); animation: iconFloat 3s infinite ease-in-out; }
+    .skin-title { margin-top: 35px; color: #d4af37; font-size: 1.8rem; font-weight: bold; }
+    .skin-icon { font-size: 3.5rem; margin: 10px 0; filter: drop-shadow(0 0 10px #d4af37); animation: iconFloat 3s infinite ease-in-out; }
     
     .skin-desc { 
-      font-size: 0.9rem; line-height: 1.7; color: #ececec; 
-      background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;
+      font-size: 0.85rem; line-height: 1.6; color: #ececec; 
+      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;
       margin: 10px 0; text-align: left; border-left: 3px solid #d4af37;
-      word-break: break-all; /* 防止长单词撑破布局 */
     }
+
+    /* 按钮组样式 */
+    .btn-group { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
 
     .back-btn {
-      margin-top: 15px; padding: 12px 40px; /* 稍微加高按钮方便手指点击 */
+      width: 100%; padding: 10px;
       background: #d4af37; border: none; color: #1a1a1a;
-      border-radius: 25px; font-weight: bold; cursor: pointer;
-      touch-action: manipulation;
+      border-radius: 20px; font-weight: bold; cursor: pointer;
     }
-    .back-btn:active { transform: scale(0.9); }
 
-    .cert-footer { margin-top: 15px; color: #666; font-size: 0.7rem; font-family: monospace; }
+    /* ZK 专属传送小卡片 */
+    .zk-mini-card {
+      width: 100%; padding: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px dashed rgba(212, 175, 55, 0.5);
+      border-radius: 15px; color: #d4af37;
+      text-decoration: none; font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; transition: all 0.3s;
+    }
+    .zk-mini-card:active { background: rgba(212, 175, 55, 0.2); transform: translateY(-2px); }
 
-    @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .cert-footer { margin-top: 15px; color: #555; font-size: 0.65rem; font-family: monospace; }
+
+    @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @keyframes glowPulse { 0% { box-shadow: 0 0 10px rgba(255,153,204,0.3); } 100% { box-shadow: 0 0 25px rgba(255,153,230,0.6); } }
     
     .footer-note{ position:absolute; bottom:18px; right:24px; color:rgba(255,255,255,0.4); font-size:0.8rem; z-index:10; }
@@ -135,13 +142,22 @@
         愿你在奔跑的年纪里，眼里有光，心中有火。<br>
         不管世界如何喧嚣，你永远是你最耀眼的自己。<br>
         🌸 祝你岁岁年年，万事胜意 🌸<br>
-        <hr style="opacity: 0.2; margin: 8px 0;">
+        <hr style="opacity: 0.1; margin: 8px 0;">
         <small style="color: #d4af37;">YKZ特别备注：</small><br>
-        给你建网站累死了现在是4.25,你有许多“好看”的照片在我这(doge)，中考后加微信，不然我就上门服务了！我要玩第五人格，咕咕嘎嘎！！！
+        给你建网站累死了现在是4.25,你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！
     </div>
-    <button class="back-btn" id="close-card">收下时装</button>
+
+    <div class="btn-group">
+        <button class="back-btn" id="close-card">收下时装</button>
+        <a href="https://yangkz1208.github.io/zk" class="zk-mini-card">
+            <span>🎁</span>
+            <span>点击调查 ZK 的秘密基地</span>
+            <span>➔</span>
+        </a>
+    </div>
+
     <div class="cert-footer">
-      持有人：杨天琳 | 编号：#20260425<br>
+      持有者：杨天琳 | 编号：#20260425<br>
       VERIFIED BY YKZ_STUDIO
     </div>
   </div>
@@ -160,14 +176,12 @@
       let clickCount = 0;
       let lastClickTime = 0;
 
-      // 1. 启动（添加了自动尝试播放逻辑）
       overlay.addEventListener('click', () => {
-          audio.play().catch(e => console.log("Audio play blocked"));
+          audio.play().catch(e => console.log("Audio blocked"));
           overlay.style.opacity = '0';
           setTimeout(() => overlay.style.display = 'none', 500);
       });
 
-      // 2. 抽奖逻辑
       triggerBtns.forEach(btn => {
           btn.addEventListener('click', () => {
               const now = Date.now();
@@ -186,9 +200,8 @@
           });
       });
 
-      // 3. 关闭卡片
       closeBtn.addEventListener('click', (e) => {
-          e.stopPropagation(); // 防止冒泡触发背景点击
+          e.stopPropagation();
           id5Card.classList.remove('active');
           setTimeout(() => {
               mainUI.style.opacity = "1";
@@ -197,12 +210,11 @@
           }, 400);
       });
 
-      // --- Canvas 核心渲染优化 ---
       const canvas = document.getElementById('canvas-bg');
-      const ctx = canvas.getContext('2d', { alpha: false }); // 优化性能
+      const ctx = canvas.getContext('2d', { alpha: false });
       let particles = [];
       let sparkles = [];
-      const PARTICLE_COUNT = Math.min(80, window.innerWidth / 5); // 根据屏幕宽度动态调整粒子数
+      const PARTICLE_COUNT = Math.min(70, window.innerWidth / 6);
       let dpr = window.devicePixelRatio || 1;
 
       const rand = (min, max) => Math.random() * (max - min) + min;
@@ -235,16 +247,13 @@
           if(this.y + this.radius < -50) this.reset(false);
         }
         draw(ctx){
-          ctx.globalAlpha = 0.8;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-          ctx.fillStyle = this.color;
-          ctx.fill();
-          // 优化手机性能：移除绳子描边
+          ctx.globalAlpha = 0.7;
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+          ctx.fillStyle = this.color; ctx.fill();
         }
       }
 
-      window.addEventListener('touchstart', (e) => { // 改为触摸事件响应更快
+      window.addEventListener('touchstart', (e) => {
           const mx = e.touches[0].clientX; const my = e.touches[0].clientY;
           particles.forEach(p => {
               if(Math.hypot(p.x - mx, p.y - my) < p.radius + 10) {
@@ -255,8 +264,7 @@
       });
 
       function resize() {
-          canvas.width = window.innerWidth * dpr;
-          canvas.height = window.innerHeight * dpr;
+          canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
           ctx.scale(dpr, dpr);
           particles = Array.from({length: PARTICLE_COUNT}, () => new Balloon(window.innerWidth, window.innerHeight));
       }
@@ -266,11 +274,9 @@
           let grad = ctx.createLinearGradient(0, 0, 0, h);
           grad.addColorStop(0, '#0f0c29'); grad.addColorStop(0.5, '#24243e'); grad.addColorStop(1, '#0b0815');
           ctx.fillStyle = grad; ctx.globalAlpha = 1; ctx.fillRect(0,0,w,h);
-
           particles.forEach(p => { p.update(); p.draw(ctx); });
           sparkles = sparkles.filter(s => s.life > 0);
           sparkles.forEach(s => { s.update(); s.draw(ctx); });
-          
           requestAnimationFrame(animate);
       }
 
