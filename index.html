@@ -2,26 +2,26 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 1. 音乐启动遮罩 - 最高层级 */
+    /* 1. 音乐启动遮罩 - 优化手机端点击响应 */
     #start-overlay {
         position: fixed; top:0; left:0; width:100%; height:100%;
         background: rgba(0,0,0,0.9); z-index: 3000;
         display: flex; justify-content: center; align-items: center;
         color: white; cursor: pointer; backdrop-filter: blur(8px);
         font-family: 'Quicksand', sans-serif; font-size: 1.5rem; text-align:center; padding:20px;
+        touch-action: none; /* 彻底禁止手势干扰 */
     }
     
     *{ margin:0; padding:0; box-sizing:border-box; }
-    body{ overflow:hidden; background:#0f0c1f; font-family:'Quicksand',sans-serif; }
+    body{ overflow:hidden; background:#0f0c1f; font-family:'Quicksand',sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    /* 背景画布 */
     #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; z-index: 1; }
     
-    /* 2. 主界面文字层 - 中间层级 */
+    /* 2. 主界面文字层 */
     .birthday-message{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
       text-align:center; color:white; z-index:100;
@@ -30,9 +30,13 @@
     }
     
     .interactive-text {
-      pointer-events: auto; cursor: pointer; user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      pointer-events: auto; cursor: pointer; 
+      user-select: none; -webkit-user-select: none; /* 禁止手机长按选中 */
+      touch-action: manipulation; /* 核心优化：消除手机端 300ms 点击延迟 */
+      transition: transform 0.1s ease;
     }
+    /* 手机端点击时的触感反馈 */
+    .interactive-text:active { transform: scale(0.92); filter: brightness(1.2); }
 
     .name-a{
       font-family:'Dancing Script',cursive; 
@@ -53,11 +57,13 @@
       animation:glowPulse 2.5s infinite alternate;
     }
 
-    /* 3. 稀世时装卡片 - 唤醒后置于顶层 */
+    /* 3. 稀世时装卡片 - 优化小屏幕适配 */
     #id5-card {
       position: fixed; top: 50%; left: 50%; 
       transform: translate(-50%, -50%) scale(0.8);
-      width: 90%; max-width: 350px; min-height: 520px;
+      width: 90%; max-width: 350px; 
+      max-height: 85vh; /* 优化：防止长文案在小手机上超出屏幕 */
+      overflow-y: auto; /* 内容过多时允许内部滑动 */
       background: linear-gradient(145deg, #1a1a1c, #0a0a0b); 
       border: 2px solid #d4af37; border-radius: 15px; 
       z-index: 1000; opacity: 0; pointer-events: none;
@@ -65,9 +71,10 @@
       display: flex; flex-direction: column; align-items: center;
       box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
       padding: 30px 20px; color: #f0f0f0; text-align: center;
+      scrollbar-width: none; /* 隐藏滚动条 */
     }
+    #id5-card::-webkit-scrollbar { display: none; }
 
-    /* 强化出金光芒 */
     #id5-card.active {
       opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1);
     }
@@ -86,19 +93,19 @@
       font-size: 0.9rem; line-height: 1.7; color: #ececec; 
       background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;
       margin: 10px 0; text-align: left; border-left: 3px solid #d4af37;
+      word-break: break-all; /* 防止长单词撑破布局 */
     }
 
     .back-btn {
-      margin-top: auto; padding: 10px 40px;
+      margin-top: 15px; padding: 12px 40px; /* 稍微加高按钮方便手指点击 */
       background: #d4af37; border: none; color: #1a1a1a;
       border-radius: 25px; font-weight: bold; cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      touch-action: manipulation;
     }
     .back-btn:active { transform: scale(0.9); }
 
     .cert-footer { margin-top: 15px; color: #666; font-size: 0.7rem; font-family: monospace; }
 
-    /* 动画定义 */
     @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     @keyframes glowPulse { 0% { box-shadow: 0 0 10px rgba(255,153,204,0.3); } 100% { box-shadow: 0 0 25px rgba(255,153,230,0.6); } }
     
@@ -153,14 +160,14 @@
       let clickCount = 0;
       let lastClickTime = 0;
 
-      // 1. 启动
+      // 1. 启动（添加了自动尝试播放逻辑）
       overlay.addEventListener('click', () => {
-          audio.play().catch(e => console.log("Audio play failed"));
+          audio.play().catch(e => console.log("Audio play blocked"));
           overlay.style.opacity = '0';
           setTimeout(() => overlay.style.display = 'none', 500);
       });
 
-      // 2. 抽奖逻辑（连点5次）
+      // 2. 抽奖逻辑
       triggerBtns.forEach(btn => {
           btn.addEventListener('click', () => {
               const now = Date.now();
@@ -171,11 +178,8 @@
               if(clickCount >= 5) {
                   mainUI.style.opacity = "0";
                   mainUI.style.filter = "blur(10px)";
-                  
-                  // 延时弹出卡片，模拟“抽中”感
                   setTimeout(() => {
                       id5Card.classList.add('active');
-                      // 触发大量金粉粒子
                       for(let i=0; i<50; i++) sparkles.push(new Sparkle(window.innerWidth/2, window.innerHeight/2, '#d4af37'));
                   }, 400);
               }
@@ -183,7 +187,8 @@
       });
 
       // 3. 关闭卡片
-      closeBtn.addEventListener('click', () => {
+      closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // 防止冒泡触发背景点击
           id5Card.classList.remove('active');
           setTimeout(() => {
               mainUI.style.opacity = "1";
@@ -192,12 +197,12 @@
           }, 400);
       });
 
-      // --- 以下为 Canvas 背景动画系统 ---
+      // --- Canvas 核心渲染优化 ---
       const canvas = document.getElementById('canvas-bg');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { alpha: false }); // 优化性能
       let particles = [];
       let sparkles = [];
-      const PARTICLE_COUNT = 80;
+      const PARTICLE_COUNT = Math.min(80, window.innerWidth / 5); // 根据屏幕宽度动态调整粒子数
       let dpr = window.devicePixelRatio || 1;
 
       const rand = (min, max) => Math.random() * (max - min) + min;
@@ -206,14 +211,13 @@
       class Sparkle {
           constructor(x, y, color) {
               this.x = x; this.y = y; this.color = color;
-              this.vx = rand(-6, 6); this.vy = rand(-6, 6);
+              this.vx = rand(-5, 5); this.vy = rand(-5, 5);
               this.alpha = 1; this.life = 50;
           }
           update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.02; this.life--; }
           draw(ctx) {
               ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
               ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, Math.PI*2); ctx.fill();
-              ctx.globalAlpha = 1;
           }
       }
 
@@ -224,31 +228,27 @@
           this.x = rand(this.radius, this.w - this.radius);
           this.y = randomY ? rand(0, this.h) : this.h + 100;
           this.color = balloonColors[Math.floor(Math.random()*balloonColors.length)];
-          this.vy = rand(-1.4, -0.6); this.vx = rand(-0.3, 0.3);
+          this.vy = rand(-1.2, -0.6); this.vx = rand(-0.2, 0.2);
         }
         update(){
           this.y += this.vy; this.x += this.vx;
           if(this.y + this.radius < -50) this.reset(false);
         }
         draw(ctx){
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y + this.radius);
-          ctx.lineTo(this.x, this.y + this.radius + 15);
-          ctx.strokeStyle = "rgba(255,255,255,0.2)";
-          ctx.stroke();
+          ctx.globalAlpha = 0.8;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
           ctx.fillStyle = this.color;
           ctx.fill();
+          // 优化手机性能：移除绳子描边
         }
       }
 
-      // 点击气球爆破
-      window.addEventListener('mousedown', (e) => {
-          const mx = e.clientX; const my = e.clientY;
+      window.addEventListener('touchstart', (e) => { // 改为触摸事件响应更快
+          const mx = e.touches[0].clientX; const my = e.touches[0].clientY;
           particles.forEach(p => {
               if(Math.hypot(p.x - mx, p.y - my) < p.radius + 10) {
-                  for(let i=0; i<15; i++) sparkles.push(new Sparkle(p.x, p.y, p.color));
+                  for(let i=0; i<12; i++) sparkles.push(new Sparkle(p.x, p.y, p.color));
                   p.reset(false);
               }
           });
@@ -263,10 +263,9 @@
 
       function animate() {
           const w = window.innerWidth; const h = window.innerHeight;
-          // 背景渐变
           let grad = ctx.createLinearGradient(0, 0, 0, h);
           grad.addColorStop(0, '#0f0c29'); grad.addColorStop(0.5, '#24243e'); grad.addColorStop(1, '#0b0815');
-          ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+          ctx.fillStyle = grad; ctx.globalAlpha = 1; ctx.fillRect(0,0,w,h);
 
           particles.forEach(p => { p.update(); p.draw(ctx); });
           sparkles = sparkles.filter(s => s.life > 0);
