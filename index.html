@@ -6,10 +6,10 @@
   <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 音乐启动遮罩样式 */
+    /* 音乐启动遮罩 */
     #start-overlay {
         position: fixed; top:0; left:0; width:100%; height:100%;
-        background: rgba(0,0,0,0.8); z-index: 100;
+        background: rgba(0,0,0,0.9); z-index: 100;
         display: flex; justify-content: center; align-items: center;
         color: white; cursor: pointer; backdrop-filter: blur(5px);
         font-family: 'Quicksand', sans-serif; font-size: 1.5rem;
@@ -17,64 +17,57 @@
     
     *{ margin:0; padding:0; box-sizing:border-box; }
     body{ overflow:hidden; background:#0f0c1f; font-family:'Quicksand',sans-serif; transition: background 2s; }
-    #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; }
+    #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; z-index: 1; }
     
     .birthday-message{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-      text-align:center; color:white; z-index:20; pointer-events:none;
-      text-shadow:0 0 20px rgba(0,0,0,0.5),0 0 40px rgba(255,120,200,0.3);
-      animation:floatText 3s ease-in-out infinite; width:100%; padding:0 20px;
+      text-align:center; color:white; z-index:20; 
+      width:100%; padding:0 20px;
+      pointer-events: none; /* 整体穿透 */
     }
     
-    /* 允许点击名字触发彩蛋 */
     .name-a{
-      pointer-events: auto; cursor: pointer;
       font-family:'Dancing Script',cursive; 
       font-size: clamp(3.2rem, 12vw, 8rem);
-      font-weight:700;
-      line-height:1.2;
+      font-weight:700; line-height:1.2;
       background:linear-gradient(135deg,#ffe99c,#ffd1f9,#a7e0ff);
       -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow:0 0 30px #ffb3d9,0 0 60px #a56bff;
-      letter-spacing:8px;
-      margin-bottom:10px;
-      filter:drop-shadow(0 10px 12px rgba(0,0,0,0.2));
-      white-space: nowrap;
+      text-shadow:0 0 30px #ffb3d9;
+      letter-spacing:8px; margin-bottom:10px;
     }
     
+    /* 核心修改点：生日快乐文字改为可点击 */
     .birthday-text{
+      pointer-events: auto; cursor: pointer; user-select: none;
       font-size:clamp(1.8rem,8vw,4rem); font-weight:600; letter-spacing:6px;
-      color:#fff5e6; text-shadow:0 0 20px #ff99cc,0 0 40px #b266ff,2px 4px 10px rgba(0,0,0,0.3);
+      color:#fff5e6; text-shadow:0 0 20px #ff99cc;
       background:rgba(255,255,255,0.05); backdrop-filter:blur(3px);
       display:inline-block; padding:12px 36px; border-radius:60px;
-      border:1px solid rgba(255,215,245,0.6); box-shadow:0 8px 20px rgba(0,0,0,0.2);
+      border:1px solid rgba(255,215,245,0.6);
       margin-top:10px; animation:glowPulse 2.5s infinite alternate;
+      transition: transform 0.1s;
     }
+    .birthday-text:active { transform: scale(0.95); }
 
-    /* 隐藏的告白文字 */
     #secret-wish {
-      position: fixed; top: 65%; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 70%; left: 50%; transform: translateX(-50%);
       color: #fff; text-align: center; opacity: 0; transition: opacity 2s;
-      z-index: 25; font-size: 1.1rem; line-height: 1.8; width: 80%;
-      text-shadow: 0 0 10px #ff69b4;
+      z-index: 25; font-size: 1.1rem; line-height: 1.8; width: 85%;
+      text-shadow: 0 0 10px #ff69b4; pointer-events: none;
     }
 
     .sub-greeting{
       margin-top:30px; font-size:1.3rem; letter-spacing:4px; color:#fbeaff;
-      text-shadow:0 0 15px #ffa0d0; opacity:0.9; font-weight:400;
+      opacity:0.9;
     }
-    @keyframes floatText{
-      0%{ transform:translate(-50%,-50%) translateY(0px); }
-      50%{ transform:translate(-50%,-50%) translateY(-8px); }
-      100%{ transform:translate(-50%,-50%) translateY(0px); }
-    }
+    
     @keyframes glowPulse{
-      0%{ box-shadow:0 8px 20px rgba(0,0,0,0.2),0 0 15px #ffb3d9; border-color:rgba(255,215,245,0.6); }
-      100%{ box-shadow:0 8px 30px rgba(150,0,200,0.4),0 0 30px #ff99e6; border-color:rgba(255,240,255,0.9); }
+      0%{ box-shadow:0 8px 20px rgba(0,0,0,0.2),0 0 15px #ffb3d9; }
+      100%{ box-shadow:0 8px 30px rgba(150,0,200,0.4),0 0 30px #ff99e6; }
     }
     .footer-note{
       position:absolute; bottom:18px; right:24px; color:rgba(255,255,255,0.5);
-      font-size:0.9rem; z-index:15; pointer-events:none; text-shadow:0 0 8px black; font-style:italic;
+      font-size:0.9rem; z-index:15; pointer-events:none;
     }
   </style>
 </head>
@@ -84,12 +77,11 @@
   </audio>
   
   <div id="start-overlay">✨ 点击屏幕，开启生日祝福 ✨</div>
-
   <canvas id="canvas-bg"></canvas>
   
   <div class="birthday-message">
-    <div class="name-a" id="name-btn">杨天琳(/^▽^)/</div>
-    <div class="birthday-text">生日快乐</div>
+    <div class="name-a">杨天琳(/^▽^)/</div>
+    <div class="birthday-text" id="trigger-btn">生日快乐</div>
     <div class="sub-greeting">✨ HAPPY BIRTHDAY ✨</div>
   </div>
 
@@ -99,175 +91,134 @@
     🌸 祝你岁岁年年，万事胜意 🌸
   </div>
 
-  <div class="footer-note">🎈 愿你每一天都闪闪发光ヽ(*≧ω≦)ﾉ by杨凯哲</div>
+  <div class="footer-note">🎈 by 杨凯哲</div>
 
   <script>
     (function(){
       const overlay = document.getElementById('start-overlay');
       const audio = document.getElementById('bgm');
-      const nameBtn = document.getElementById('name-btn');
+      const triggerBtn = document.getElementById('trigger-btn');
       const secretWish = document.getElementById('secret-wish');
       
       let clickCount = 0;
+      let lastClickTime = 0;
       let isDreamMode = false;
 
-      // 启动
+      // 1. 启动音频
       const startPlayback = () => {
           audio.play();
           overlay.style.display = 'none';
       };
       overlay.addEventListener('click', startPlayback);
 
-      // 彩蛋触发：点击名字
-      nameBtn.addEventListener('click', () => {
+      // 2. 彩蛋触发逻辑：点击“生日快乐”
+      triggerBtn.addEventListener('click', (e) => {
+          const now = Date.now();
+          if (now - lastClickTime > 1000) clickCount = 0; // 超过1秒没点就重置
+          
           clickCount++;
+          lastClickTime = now;
+
           if(clickCount >= 5 && !isDreamMode) {
               isDreamMode = true;
-              document.body.style.background = "#2d1b2d";
+              document.body.style.background = "#3d1a2a"; // 切换暖紫色背景
               secretWish.style.opacity = "1";
-              // 改变气球颜色池为暖色调
+              // 改变气球颜色池为樱花粉/暖金色
               balloonColors.length = 0;
-              balloonColors.push('#ffb3ba', '#ffdfba', '#ffffba', '#baffc9', '#bae1ff');
+              balloonColors.push('#ffb3ba', '#ffd1dc', '#fff0f5', '#ffe4e1', '#ffd700');
           }
       });
 
+      // 3. 画布动画
       const canvas = document.getElementById('canvas-bg');
       const ctx = canvas.getContext('2d');
       let particles = [];
-      let sparkles = []; // 爆破粒子
-      const PARTICLE_COUNT = 100;
-      let animationFrame = null;
+      let sparkles = []; 
+      const PARTICLE_COUNT = 80;
       let dpr = window.devicePixelRatio || 1;
-
       const rand = (min, max) => Math.random() * (max - min) + min;
-      const balloonColors = ['#FF6B8B','#FF8E53','#FFD166','#06D6A0','#118AB2','#9D4EDD','#FF99C8','#F15BB5','#FEE440','#00BBF9'];
+      const balloonColors = ['#FF6B8B','#FF8E53','#FFD166','#06D6A0','#118AB2','#9D4EDD','#FF99C8','#F15BB5'];
 
-      // 爆破粒子类
       class Sparkle {
           constructor(x, y, color) {
-              this.x = x; this.y = y;
-              this.color = color;
-              this.vx = rand(-4, 4);
-              this.vy = rand(-4, 4);
-              this.alpha = 1;
-              this.life = rand(20, 40);
+              this.x = x; this.y = y; this.color = color;
+              this.vx = rand(-5, 5); this.vy = rand(-5, 5);
+              this.alpha = 1; this.life = 30;
           }
-          update() {
-              this.x += this.vx;
-              this.y += this.vy;
-              this.alpha -= 0.02;
-              this.life--;
-          }
+          update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.03; this.life--; }
           draw(ctx) {
-              ctx.fillStyle = this.color;
-              ctx.globalAlpha = this.alpha;
-              ctx.beginPath();
-              ctx.arc(this.x, this.y, 2, 0, Math.PI*2);
-              ctx.fill();
+              ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+              ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI*2); ctx.fill();
               ctx.globalAlpha = 1;
           }
       }
 
       class Balloon {
-        constructor(w, h){
-          this.width = w; this.height = h;
-          this.reset(true);
-        }
+        constructor(w, h){ this.w = w; this.h = h; this.reset(true); }
         reset(randomY=true){
-          this.radius = rand(18, 38);
-          this.x = rand(this.radius*1.5, this.width-this.radius*1.5);
-          this.y = randomY ? rand(this.radius, this.height-this.radius) : this.height + this.radius * 2;
+          this.radius = rand(20, 35);
+          this.x = rand(this.radius, this.w - this.radius);
+          this.y = randomY ? rand(0, this.h) : this.h + 100;
           this.color = balloonColors[Math.floor(Math.random()*balloonColors.length)];
-          this.vy = rand(-1.2, -0.5);
-          this.vx = rand(-0.25, 0.25);
+          this.vy = rand(-1.5, -0.6); this.vx = rand(-0.3, 0.3);
         }
         update(){
-          this.x += this.vx; this.y += this.vy;
-          if(this.y + this.radius < 0) this.reset(false);
+          this.y += this.vy; this.x += this.vx;
+          if(this.y + this.radius < -50) this.reset(false);
         }
         draw(ctx){
           ctx.beginPath();
           ctx.moveTo(this.x, this.y + this.radius);
-          ctx.lineTo(this.x, this.y + this.radius + 15);
-          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctx.lineTo(this.x, this.y + this.radius + 20);
+          ctx.strokeStyle = "rgba(255,255,255,0.2)";
           ctx.stroke();
-
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
           ctx.fillStyle = this.color;
-          ctx.shadowBlur = 10; ctx.shadowColor = this.color;
           ctx.fill();
-          ctx.shadowBlur = 0;
-
           // 高光
           ctx.beginPath();
           ctx.arc(this.x - this.radius*0.3, this.y - this.radius*0.3, this.radius*0.2, 0, Math.PI*2);
-          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.fillStyle = "rgba(255,255,255,0.3)";
           ctx.fill();
         }
       }
 
-      // 监听点击气球爆破
-      canvas.addEventListener('mousedown', (e) => {
-          const rect = canvas.getBoundingClientRect();
-          const mx = (e.clientX - rect.left);
-          const my = (e.clientY - rect.top);
-          
-          particles.forEach((p, i) => {
-              const dist = Math.hypot(p.x - mx, p.y - my);
-              if(dist < p.radius) {
-                  // 产生爆破粒子
-                  for(let j=0; j<15; j++) sparkles.push(new Sparkle(p.x, p.y, p.color));
+      // 气球爆破：监听全局点击判断是否点中气球
+      window.addEventListener('mousedown', (e) => {
+          const mx = e.clientX; const my = e.clientY;
+          particles.forEach(p => {
+              if(Math.hypot(p.x - mx, p.y - my) < p.radius) {
+                  for(let i=0; i<10; i++) sparkles.push(new Sparkle(p.x, p.y, p.color));
                   p.reset(false);
               }
           });
       });
 
-      function resizeCanvas(){
-        const w = window.innerWidth; const h = window.innerHeight;
-        canvas.width = w * dpr; canvas.height = h * dpr;
-        ctx.scale(dpr, dpr);
-        particles = Array.from({length: PARTICLE_COUNT}, () => new Balloon(w, h));
+      function resize() {
+          canvas.width = window.innerWidth * dpr;
+          canvas.height = window.innerHeight * dpr;
+          ctx.scale(dpr, dpr);
+          particles = Array.from({length: PARTICLE_COUNT}, () => new Balloon(window.innerWidth, window.innerHeight));
       }
 
-      function drawMeteor(w, h) {
-          if(Math.random() < 0.005) { // 极低概率出现流星
+      function animate() {
+          const w = window.innerWidth; const h = window.innerHeight;
+          ctx.clearRect(0,0,w,h);
+
+          // 绘制流星
+          if(Math.random() < 0.01) {
               ctx.beginPath();
-              let startX = rand(w*0.5, w);
-              let startY = rand(0, h*0.3);
-              ctx.moveTo(startX, startY);
-              ctx.lineTo(startX - 100, startY + 60);
-              ctx.strokeStyle = "rgba(255,255,255,0.5)";
-              ctx.lineWidth = 2;
-              ctx.stroke();
+              let sx = rand(w*0.3, w); let sy = rand(0, h*0.2);
+              ctx.moveTo(sx, sy); ctx.lineTo(sx-80, sy+50);
+              ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.stroke();
           }
+
+          particles.forEach(p => { p.update(); p.draw(ctx); });
+          sparkles = sparkles.filter(s => s.life > 0);
+          sparkles.forEach(s => { s.update(); s.draw(ctx); });
+          
+          requestAnimationFrame(animate);
       }
 
-      function animate(){
-        const w = window.innerWidth; const h = window.innerHeight;
-        
-        // 渐变背景
-        let grad = ctx.createLinearGradient(0,0,0,h);
-        grad.addColorStop(0, isDreamMode ? '#4a2c4a' : '#0f0c1f');
-        grad.addColorStop(1, isDreamMode ? '#1a0f1a' : '#05050a');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0,0,w,h);
-
-        drawMeteor(w, h);
-        
-        particles.forEach(p => { p.update(); p.draw(ctx); });
-        
-        // 更新爆破粒子
-        sparkles = sparkles.filter(s => s.life > 0);
-        sparkles.forEach(s => { s.update(); s.draw(ctx); });
-
-        animationFrame = requestAnimationFrame(animate);
-      }
-
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-      animate();
-    })();
-  </script>
-</body>
-</html>
+      window.addEventListener('resize', resize
