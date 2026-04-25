@@ -6,160 +6,155 @@
   <title>🎂 杨天琳 · 生日快乐( ´ ▽ ` )ﾉ</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 原有启动遮罩 */
+    /* 基础重置 */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { font-family: 'Quicksand', sans-serif; -webkit-tap-highlight-color: transparent; perspective: 2000px; }
+
+    /* 视频背景 */
+    #video-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+        filter: brightness(0.5) contrast(1.1); /* 调暗背景，突出文字 */
+    }
+
+    /* 启动遮罩 */
     #start-overlay {
-        position: fixed; top:0; left:0; width:100%; height:100%;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.9); z-index: 3000;
         display: flex; justify-content: center; align-items: center;
-        color: white; cursor: pointer; backdrop-filter: blur(8px);
-        font-family: 'Quicksand', sans-serif; font-size: 1.5rem; text-align:center; padding:20px;
-        touch-action: none; transition: opacity 0.5s;
-    }
-    
-    *{ margin:0; padding:0; box-sizing:border-box; }
-    body{ 
-        overflow:hidden; background:#0f0c1f; 
-        font-family:'Quicksand',sans-serif; 
-        -webkit-tap-highlight-color: transparent; 
-        perspective: 1000px; /* 【添加】3D透视 */
-    }
-    #canvas-bg{ position:fixed; top:0; left:0; width:100%; height:100%; display:block; z-index: 1; }
-    
-    /* 主界面文字层 */
-    .birthday-message{
-      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-      text-align:center; color:white; z-index:100;
-      width:100%; padding:0 20px;
-      pointer-events: none; transition: opacity 0.6s ease, filter 0.6s ease;
-    }
-    
-    .interactive-text {
-      pointer-events: auto; cursor: pointer; 
-      user-select: none; -webkit-user-select: none;
-      touch-action: manipulation;
-      transition: transform 0.1s ease;
-    }
-    .interactive-text:active { transform: scale(0.92); filter: brightness(1.2); }
-
-    .name-a{
-      font-family:'Dancing Script',cursive; 
-      font-size: clamp(3rem, 12vw, 7.5rem);
-      font-weight:700; line-height:1.2;
-      background:linear-gradient(135deg,#ffe99c,#ffd1f9,#a7e0ff);
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow:0 0 30px rgba(255,179,217,0.5);
-      letter-spacing:4px; margin-bottom:10px;
-    }
-    
-    .birthday-text{
-      font-size:clamp(1.6rem,7vw,3.5rem); font-weight:600; letter-spacing:6px;
-      color:#fff5e6; text-shadow:0 0 20px #ff99cc;
-      background:rgba(255,255,255,0.1); backdrop-filter:blur(5px);
-      display:inline-block; padding:10px 30px; border-radius:50px;
-      border:1px solid rgba(255,215,245,0.4);
-      animation:glowPulse 2.5s infinite alternate;
+        color: white; cursor: pointer; backdrop-filter: blur(10px);
+        font-size: 1.4rem; text-align: center; padding: 20px;
+        line-height: 1.6;
     }
 
-    /* 稀世时装大卡片 */
+    /* 主界面文字 */
+    .birthday-message {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; color: white; z-index: 100; width: 100%;
+      pointer-events: none; transition: opacity 0.5s, filter 0.5s;
+    }
+    .interactive-text { 
+      pointer-events: auto; cursor: pointer; user-select: none; 
+      -webkit-user-select: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: block; width: fit-content; margin: 0 auto;
+    }
+    .interactive-text:active { transform: scale(0.9); filter: brightness(1.3); }
+
+    .name-a {
+      font-family: 'Dancing Script', cursive; font-size: clamp(3rem, 12vw, 7rem);
+      background: linear-gradient(135deg, #ffe99c, #ffd1f9, #a7e0ff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 0 30px rgba(255, 179, 217, 0.5); margin-bottom: 10px;
+    }
+    .birthday-text {
+      font-size: clamp(1.6rem, 7vw, 3rem); font-weight: 600;
+      color: #fff5e6; text-shadow: 0 0 20px #ff99cc;
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
+      display: inline-block; padding: 10px 30px; border-radius: 50px;
+      border: 1px solid rgba(255, 215, 245, 0.4);
+    }
+
+    /* 粒子星星 */
+    .spark {
+      position: fixed; pointer-events: none; z-index: 2000;
+      background: #fff; border-radius: 50%;
+      box-shadow: 0 0 10px #ffd137;
+      animation: spark-fly 0.7s ease-out forwards;
+    }
+    @keyframes spark-fly {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    /* 稀世卡片 3D */
     #id5-card {
-      position: fixed; top: 48%; left: 50%; 
-      /* 【修改】初始 transform 增加 rotate 占位 */
-      transform: translate(-50%, -50%) scale(0.8) rotateX(0deg) rotateY(0deg);
+      position: fixed; top: 50%; left: 50%; 
+      transform-origin: center;
+      transform: translate(-50%, -50%) scale(0.8);
       width: 90%; max-width: 350px; 
-      max-height: 85vh; 
-      overflow-y: auto; 
+      height: 75vh; max-height: 550px;
       background: linear-gradient(145deg, #1a1a1c, #0a0a0b); 
-      border: 2px solid #d4af37; border-radius: 15px; 
+      border: 2px solid #d4af37; border-radius: 18px; 
       z-index: 1000; opacity: 0; pointer-events: none;
-      /* 【修改】transition 缩短以保证陀螺仪丝滑 */
-      transition: opacity 0.7s ease, transform 0.1s ease-out; 
+      transition: opacity 0.6s, transform 0.2s ease-out;
       display: flex; flex-direction: column; align-items: center;
       box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
-      padding: 25px 20px; color: #f0f0f0; text-align: center;
-      scrollbar-width: none;
-      transform-style: preserve-3d; /* 【添加】开启3D子元素渲染 */
+      padding: 30px 20px; color: #f0f0f0; text-align: center;
+      transform-style: preserve-3d;
     }
-    #id5-card::-webkit-scrollbar { display: none; }
     #id5-card.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
     .rarity-tag {
       background: linear-gradient(90deg, #d4af37, #f7e695); color: #1a1a1a;
-      font-weight: 800; padding: 4px 20px; font-size: 0.85rem;
-      position: absolute; top: 15px; left: -10px;
-      transform: rotate(-5deg); box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+      font-weight: 800; padding: 4px 18px; font-size: 0.8rem;
+      position: absolute; top: 15px; left: -10px; transform: rotate(-5deg) translateZ(30px);
     }
-
-    .skin-title { margin-top: 35px; color: #d4af37; font-size: 1.8rem; font-weight: bold; }
-    .skin-icon { font-size: 3.5rem; margin: 10px 0; filter: drop-shadow(0 0 10px #d4af37); animation: iconFloat 3s infinite ease-in-out; }
+    .skin-title { margin-top: 25px; color: #d4af37; font-size: 1.7rem; font-weight: bold; transform: translateZ(40px); }
+    .skin-icon { font-size: 3.5rem; margin: 10px 0; transform: translateZ(50px); }
     
     .skin-desc { 
-      font-size: 0.85rem; line-height: 1.6; color: #ececec; 
-      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;
+      flex: 1; width: 100%; overflow-y: auto;
+      font-size: 0.9rem; line-height: 1.6; color: #ececec; 
+      background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px;
       margin: 10px 0; text-align: left; border-left: 3px solid #d4af37;
-      min-height: 150px; /* 【添加】固定高度防止打字时卡片跳动 */
+      scrollbar-width: none; transform: translateZ(20px);
     }
+    .skin-desc::-webkit-scrollbar { display: none; }
 
-    .btn-group { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
-
+    .btn-group { width: 100%; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; transform: translateZ(30px); }
     .back-btn {
-      width: 100%; padding: 10px;
-      background: #d4af37; border: none; color: #1a1a1a;
-      border-radius: 20px; font-weight: bold; cursor: pointer;
+      width: 100%; padding: 12px; background: #d4af37; border: none;
+      color: #1a1a1a; border-radius: 25px; font-weight: bold; cursor: pointer;
     }
-
     .zk-mini-card {
-      width: 100%; padding: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px dashed rgba(212, 175, 55, 0.5);
-      border-radius: 15px; color: #d4af37;
-      text-decoration: none; font-size: 0.8rem;
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; transition: all 0.3s;
+      width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.08);
+      border: 1px dashed rgba(212, 175, 55, 0.5); border-radius: 15px;
+      color: #d4af37; text-decoration: none; font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .zk-mini-card:active { background: rgba(212, 175, 55, 0.2); transform: translateY(-2px); }
 
-    .cert-footer { margin-top: 15px; color: #555; font-size: 0.65rem; font-family: monospace; }
-
-    @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    @keyframes glowPulse { 0% { box-shadow: 0 0 10px rgba(255,153,204,0.3); } 100% { box-shadow: 0 0 25px rgba(255,153,230,0.6); } }
-    
-    .footer-note{ position:absolute; bottom:18px; right:24px; color:rgba(255,255,255,0.4); font-size:0.8rem; z-index:10; }
+    .footer-note { position: absolute; bottom: 15px; right: 20px; color: rgba(255, 255, 255, 0.3); font-size: 0.75rem; z-index: 10; }
   </style>
 </head>
 <body>
+
+  <video id="video-bg" autoplay muted loop playsinline poster="">
+    <source src="v-30.mp4" type="video/mp4">
+  </video>
+  
   <audio id="bgm" loop preload="auto">
     <source src="https://raw.githubusercontent.com/yangkz1208/yangtianlin/main/114514.mp3" type="audio/mpeg">
   </audio>
   
-  <div id="start-overlay">✨ 点击开启生日惊喜 ✨<br><br><small style="font-size: 0.8rem; opacity: 0.8;">( 连点“生日快乐”有惊喜 )</small></div>
+  <div id="start-overlay">
+      <div>
+          ✨ 点击开启生日惊喜 ✨<br>
+          <small style="font-size: 0.8rem; opacity: 0.7;">( 连点“杨天琳”有稀世惊喜 )</small>
+      </div>
+  </div>
 
-  <canvas id="canvas-bg"></canvas>
-  
   <div class="birthday-message" id="main-ui">
     <div class="name-a interactive-text trigger-egg">杨天琳(/^▽^)/</div>
     <div class="birthday-text interactive-text trigger-egg">生日快乐</div>
-    <div style="margin-top:20px; font-size:1.1rem; color:#fbeaff; opacity:0.7; letter-spacing:3px;">✨ HAPPY BIRTHDAY ✨</div>
+    <div style="margin-top:20px; font-size:1.1rem; color:#fbeaff; opacity:0.6; letter-spacing: 5px;">✨ HAPPY BIRTHDAY ✨</div>
   </div>
 
   <div id="id5-card">
     <div class="rarity-tag">稀世 (S-Rank)</div>
     <div class="skin-title">永恒光辉</div>
     <div class="skin-icon">🕯️</div>
-    <div class="skin-desc" id="typewriter-content">
-        </div>
-
+    <div class="skin-desc" id="typewriter-content"></div>
     <div class="btn-group">
         <button class="back-btn" id="close-card">收下时装</button>
-        <a href="https://yangkz1208.github.io/zk" class="zk-mini-card">
-            <span>🎁</span>
-            <span>中考时间（我建的！！！）</span>
-            <span>➔</span>
+        <a href="https://yangkz1208.github.io/zk" class="zk-mini-card" target="_blank">
+            <span>🎁 中考倒计时（我建的！） ➔</span>
         </a>
-    </div>
-
-    <div class="cert-footer">
-      持有者：杨天琳 | 编号：#20260425<br>
-      VERIFIED BY YKZ_STUDIO
     </div>
   </div>
 
@@ -169,6 +164,7 @@
     (function(){
       const overlay = document.getElementById('start-overlay');
       const audio = document.getElementById('bgm');
+      const video = document.getElementById('video-bg');
       const mainUI = document.getElementById('main-ui');
       const id5Card = document.getElementById('id5-card');
       const closeBtn = document.getElementById('close-card');
@@ -177,15 +173,38 @@
       
       let clickCount = 0;
       let lastClickTime = 0;
-      let isCardActive = false;
 
-      // 【添加】打字机逻辑
+      // 1. 启动逻辑
+      overlay.addEventListener('click', () => {
+          audio.play().catch(() => {});
+          if(video) video.play(); // 确保视频播放
+          overlay.style.opacity = '0';
+          setTimeout(() => overlay.style.display = 'none', 500);
+      });
+
+      // 2. 3D 倾斜效果 (响应鼠标和触摸)
+      function handleMove(e) {
+          if (!id5Card.classList.contains('active')) return;
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          const x = (window.innerWidth / 2 - clientX) / 35;
+          const y = (window.innerHeight / 2 - clientY) / 35;
+          id5Card.style.transform = `translate(-50%, -50%) rotateY(${-x}deg) rotateX(${y}deg)`;
+      }
+      function resetMove() {
+          id5Card.style.transform = `translate(-50%, -50%) scale(1) rotateX(0) rotateY(0)`;
+      }
+      window.addEventListener('mousemove', handleMove);
+      window.addEventListener('touchmove', handleMove);
+      window.addEventListener('touchend', resetMove);
+
+      // 3. 打字机特效
       function startTypewriter() {
-          const text = `愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style="opacity: 0.1; margin: 8px 0;"><small style="color: #d4af37;">YKZ特别备注：</small><br>给你建网站累死了现在是4.25,你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！`;
+          const text = `愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style="opacity: 0.1; margin: 8px 0;"><small style="color: #d4af37;">YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！`;
           typewriterContent.innerHTML = "";
           let i = 0;
           const timer = setInterval(() => {
-              if (text[i] === '<') { // 简单处理HTML标签跳过
+              if (text[i] === '<') {
                   let tagEnd = text.indexOf('>', i);
                   typewriterContent.innerHTML += text.substring(i, tagEnd + 1);
                   i = tagEnd + 1;
@@ -194,150 +213,60 @@
                   i++;
               }
               if (i >= text.length) clearInterval(timer);
-          }, 35);
+          }, 40);
       }
 
-      // 【添加】3D陀螺仪/鼠标倾斜逻辑
-      function handleMove(e) {
-          if (!isCardActive) return;
-          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-          
-          const x = (window.innerWidth / 2 - clientX) / 15;
-          const y = (window.innerHeight / 2 - clientY) / 15;
-          
-          id5Card.style.transform = `translate(-50%, -50%) scale(1) rotateY(${-x}deg) rotateX(${y}deg)`;
+      // 4. 星星反馈
+      function createSparks(x, y) {
+          for (let i = 0; i < 8; i++) {
+              const spark = document.createElement('div');
+              spark.className = 'spark';
+              const size = Math.random() * 5 + 2;
+              spark.style.width = size + 'px'; spark.style.height = size + 'px';
+              spark.style.left = x + 'px'; spark.style.top = y + 'px';
+              const angle = Math.random() * Math.PI * 2;
+              const velocity = 50 + Math.random() * 80;
+              spark.style.setProperty('--tx', `${Math.cos(angle) * velocity}px`);
+              spark.style.setProperty('--ty', `${Math.sin(angle) * velocity}px`);
+              document.body.appendChild(spark);
+              setTimeout(() => spark.remove(), 700);
+          }
       }
-      window.addEventListener('mousemove', handleMove);
-      window.addEventListener('touchmove', handleMove);
 
-      overlay.addEventListener('click', () => {
-          audio.play().catch(e => console.log("Audio blocked"));
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.style.display = 'none', 500);
-      });
-
+      // 5. 触发逻辑
       triggerBtns.forEach(btn => {
-          btn.addEventListener('click', () => {
+          btn.addEventListener('mousedown', (e) => {
+              createSparks(e.clientX, e.clientY);
               const now = Date.now();
-              if (now - lastClickTime > 1500) clickCount = 0;
+              if (now - lastClickTime > 2000) clickCount = 0; // 2秒内有效
               clickCount++;
               lastClickTime = now;
 
+              // 点击视觉反馈
+              btn.style.filter = `brightness(${1 + clickCount * 0.1}) blur(${clickCount * 0.1}px)`;
+              
               if(clickCount >= 5) {
-                  isCardActive = true;
                   mainUI.style.opacity = "0";
                   mainUI.style.filter = "blur(10px)";
-                  setTimeout(() => {
-                      id5Card.classList.add('active');
-                      startTypewriter(); // 启动打字机
-                      for(let i=0; i<50; i++) sparkles.push(new Sparkle(window.innerWidth/2, window.innerHeight/2, '#d4af37'));
+                  setTimeout(() => { 
+                      id5Card.classList.add('active'); 
+                      startTypewriter(); 
                   }, 400);
               }
           });
       });
 
-      closeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
+      // 6. 关闭卡片
+      closeBtn.addEventListener('click', () => {
           id5Card.classList.remove('active');
-          isCardActive = false;
-          // 重置位置
-          id5Card.style.transform = `translate(-50%, -50%) scale(0.8) rotateX(0deg) rotateY(0deg)`;
           setTimeout(() => {
               mainUI.style.opacity = "1";
               mainUI.style.filter = "blur(0)";
               clickCount = 0;
-              typewriterContent.innerHTML = ""; // 清空打字机内容
+              typewriterContent.innerHTML = "";
+              triggerBtns.forEach(b => { b.style.filter = ''; });
           }, 400);
       });
-
-      const canvas = document.getElementById('canvas-bg');
-      const ctx = canvas.getContext('2d', { alpha: false });
-      let particles = [];
-      let sparkles = [];
-      const PARTICLE_COUNT = Math.min(70, window.innerWidth / 6);
-      let dpr = window.devicePixelRatio || 1;
-
-      const rand = (min, max) => Math.random() * (max - min) + min;
-      const balloonColors = ['#FF6B8B','#FF8E53','#FFD166','#06D6A0','#118AB2','#9D4EDD','#FF99C8','#F15BB5'];
-
-      class Sparkle {
-          constructor(x, y, color) {
-              this.x = x; this.y = y; this.color = color;
-              this.vx = rand(-5, 5); this.vy = rand(-5, 5);
-              this.alpha = 1; this.life = 50;
-          }
-          update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.02; this.life--; }
-          draw(ctx) {
-              ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-              ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, Math.PI*2); ctx.fill();
-          }
-      }
-
-      class Balloon {
-        constructor(w, h){ this.w = w; this.h = h; this.reset(true); }
-        reset(randomY=true){
-          this.radius = rand(20, 40);
-          this.x = rand(this.radius, this.w - this.radius);
-          this.y = randomY ? rand(0, this.h) : this.h + 100;
-          this.color = balloonColors[Math.floor(Math.random()*balloonColors.length)];
-          this.vy = rand(-1.2, -0.6); this.vx = rand(-0.2, 0.2);
-          this.phase = Math.random() * Math.PI * 2; // 【优化】添加相位用于呼吸感
-        }
-        update(){
-          this.y += this.vy; this.x += this.vx;
-          if(this.y + this.radius < -50) this.reset(false);
-        }
-        draw(ctx){
-          ctx.save(); // 【优化】保护Canvas状态
-          // 【优化】添加微小的呼吸感缩放
-          const breath = Math.sin(Date.now() * 0.002 + this.phase) * 3;
-          ctx.globalAlpha = 0.7;
-          ctx.beginPath(); 
-          ctx.arc(this.x, this.y, this.radius + breath, 0, Math.PI*2);
-          ctx.fillStyle = this.color; 
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-
-      window.addEventListener('touchstart', (e) => {
-          const mx = e.touches[0].clientX; const my = e.touches[0].clientY;
-          particles.forEach(p => {
-              if(Math.hypot(p.x - mx, p.y - my) < p.radius + 10) {
-                  for(let i=0; i<12; i++) sparkles.push(new Sparkle(p.x, p.y, p.color));
-                  p.reset(false);
-              }
-          });
-      }, {passive: true});
-
-      function resize() {
-          canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
-          ctx.scale(dpr, dpr);
-          particles = Array.from({length: PARTICLE_COUNT}, () => new Balloon(window.innerWidth, window.innerHeight));
-      }
-
-      function animate() {
-          const w = window.innerWidth; const h = window.innerHeight;
-          ctx.save();
-          let grad = ctx.createLinearGradient(0, 0, 0, h);
-          grad.addColorStop(0, '#0f0c29'); grad.addColorStop(0.5, '#24243e'); grad.addColorStop(1, '#0b0815');
-          ctx.fillStyle = grad; ctx.globalAlpha = 1; ctx.fillRect(0,0,w,h);
-          ctx.restore();
-
-          particles.forEach(p => { p.update(); p.draw(ctx); });
-          
-          // 【优化】内存管理：限制sparkles数量
-          if(sparkles.length > 200) sparkles.shift(); 
-          
-          sparkles = sparkles.filter(s => s.life > 0);
-          sparkles.forEach(s => { s.update(); s.draw(ctx); });
-          requestAnimationFrame(animate);
-      }
-
-      window.addEventListener('resize', resize);
-      resize();
-      animate();
     })();
   </script>
 </body>
