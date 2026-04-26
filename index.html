@@ -110,6 +110,23 @@
     }
     .skin-desc::-webkit-scrollbar { display: none; }
 
+    /* 高亮提示文字样式 */
+    .keyword-highlight {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(212, 175, 55, 0.1);
+      border-radius: 8px;
+      color: #ffcc00;
+      font-weight: bold;
+      border: 1px solid rgba(255, 204, 0, 0.3);
+      text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+      animation: breathe 2s infinite ease-in-out;
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.01); }
+    }
+
     .btn-group { width: 100%; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; transform: translateZ(30px); }
     .back-btn {
       width: 100%; padding: 12px; background: #d4af37; border: none;
@@ -177,17 +194,17 @@
       let clickCount = 0;
       let lastClickTime = 0;
       
-      // 陀螺仪变量
+      // 陀螺仪与位置变量
       let curX = 0, curY = 0;
       let targetX = 0, targetY = 0;
 
-      // 启动初始化
+      // 点击遮罩启动
       overlay.addEventListener('click', () => {
           audio.play().catch(() => {});
           if(video) video.play();
           
-          // 请求陀螺仪权限 (iOS 特色)
-          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          // 请求陀螺仪权限
+          if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
               DeviceOrientationEvent.requestPermission().then(state => {
                   if (state === 'granted') window.addEventListener('deviceorientation', handleGyro);
               }).catch(console.error);
@@ -199,18 +216,15 @@
           setTimeout(() => overlay.style.display = 'none', 500);
       });
 
-      // 1. 陀螺仪逻辑
+      // 陀螺仪处理
       function handleGyro(e) {
-          // beta: 左右倾斜 (-180, 180) -> 我们取常用范围约 -30 到 30
-          // gamma: 前后倾斜 (-90, 90)
           let x = e.gamma / 1.5; 
-          let y = (e.beta - 45) / 1.5; // 减去 45 度是假设用户手持手机的自然角度
-          
+          let y = (e.beta - 45) / 1.5; 
           targetX = Math.max(Math.min(x, 20), -20);
           targetY = Math.max(Math.min(y, 20), -20);
       }
 
-      // 2. 鼠标/触摸逻辑 (与陀螺仪叠加)
+      // 手指/鼠标处理
       function handleMove(e) {
           const clientX = e.touches ? e.touches[0].clientX : e.clientX;
           const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -218,11 +232,10 @@
           targetY = (window.innerHeight / 2 - clientY) / 25;
       }
 
-      // 3. 统一动画渲染渲染 (平滑滤波)
+      // 动画渲染帧
       function updateFrame() {
           curX += (targetX - curX) * 0.1;
           curY += (targetY - curY) * 0.1;
-
           const transformStr = `translate(-50%, -50%) rotateY(${curX}deg) rotateX(${-curY}deg)`;
           
           if (id5Card.classList.contains('active')) {
@@ -237,8 +250,10 @@
       window.addEventListener('mousemove', handleMove);
       window.addEventListener('touchmove', handleMove);
 
+      // 打字机逻辑
       function startTypewriter() {
-          const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！";
+          const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！<br><div class='keyword-highlight'>💡 任务：给我说“我听见了生生不息的回响”，获得生日礼物 (doge)</div>";
+          
           typewriterContent.innerHTML = "";
           let i = 0;
           const timer = setInterval(() => {
@@ -250,10 +265,14 @@
                   typewriterContent.innerHTML += text[i];
                   i++;
               }
-              if (i >= text.length) clearInterval(timer);
+              if (i >= text.length) {
+                  clearInterval(timer);
+                  typewriterContent.scrollTop = typewriterContent.scrollHeight;
+              }
           }, 40);
       }
 
+      // 粒子特效
       function createSparks(x, y) {
           for (let i = 0; i < 8; i++) {
               const spark = document.createElement('div');
@@ -270,6 +289,7 @@
           }
       }
 
+      // 彩蛋触发
       triggerBtns.forEach(btn => {
           btn.addEventListener('mousedown', (e) => {
               createSparks(e.clientX, e.clientY);
@@ -278,6 +298,7 @@
               clickCount++;
               lastClickTime = now;
               btn.style.filter = `brightness(${1 + clickCount * 0.1}) blur(${clickCount * 0.1}px)`;
+              
               if(clickCount >= 5) {
                   mainUI.style.opacity = "0";
                   mainUI.style.filter = "blur(10px)";
@@ -292,6 +313,7 @@
           });
       });
 
+      // 关闭卡片
       closeBtn.addEventListener('click', () => {
           id5Card.classList.remove('active');
           setTimeout(() => {
