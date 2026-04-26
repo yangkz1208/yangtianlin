@@ -2,7 +2,6 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>🎂 杨天琳 · 生日快乐</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
@@ -209,7 +208,7 @@
       window.addEventListener('touchend', resetMove);
 
       function startTypewriter() {
-          // 对文案进行了标准字符确保处理
+          // 这里使用标准的中文文本，确保脚本执行时无编码干扰
           const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！";
           typewriterContent.innerHTML = "";
           let i = 0;
@@ -261,7 +260,6 @@
                   }, 400);
               }
           });
-          // 适配移动端点击
           btn.addEventListener('touchstart', (e) => {
               createSparks(e.touches[0].clientX, e.touches[0].clientY);
           });
