@@ -37,7 +37,7 @@
       transform: translate(-50%, -50%);
       text-align: center; color: white; z-index: 100; width: 100%;
       pointer-events: none; 
-      transition: opacity 0.5s, filter 0.5s, transform 0.2s ease-out;
+      transition: opacity 0.5s, filter 0.5s, transform 0.1s ease-out;
       transform-style: preserve-3d;
     }
     
@@ -85,7 +85,7 @@
       background: linear-gradient(145deg, #1a1a1c, #0a0a0b); 
       border: 2px solid #d4af37; border-radius: 18px; 
       z-index: 1000; opacity: 0; pointer-events: none;
-      transition: opacity 0.6s, transform 0.2s ease-out;
+      transition: opacity 0.6s, transform 0.1s ease-out;
       display: flex; flex-direction: column; align-items: center;
       box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
       padding: 30px 20px; color: #f0f0f0; text-align: center;
@@ -176,39 +176,68 @@
       
       let clickCount = 0;
       let lastClickTime = 0;
+      
+      // 陀螺仪变量
+      let curX = 0, curY = 0;
+      let targetX = 0, targetY = 0;
 
+      // 启动初始化
       overlay.addEventListener('click', () => {
           audio.play().catch(() => {});
           if(video) video.play();
+          
+          // 请求陀螺仪权限 (iOS 特色)
+          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+              DeviceOrientationEvent.requestPermission().then(state => {
+                  if (state === 'granted') window.addEventListener('deviceorientation', handleGyro);
+              }).catch(console.error);
+          } else {
+              window.addEventListener('deviceorientation', handleGyro);
+          }
+
           overlay.style.opacity = '0';
           setTimeout(() => overlay.style.display = 'none', 500);
       });
 
+      // 1. 陀螺仪逻辑
+      function handleGyro(e) {
+          // beta: 左右倾斜 (-180, 180) -> 我们取常用范围约 -30 到 30
+          // gamma: 前后倾斜 (-90, 90)
+          let x = e.gamma / 1.5; 
+          let y = (e.beta - 45) / 1.5; // 减去 45 度是假设用户手持手机的自然角度
+          
+          targetX = Math.max(Math.min(x, 20), -20);
+          targetY = Math.max(Math.min(y, 20), -20);
+      }
+
+      // 2. 鼠标/触摸逻辑 (与陀螺仪叠加)
       function handleMove(e) {
           const clientX = e.touches ? e.touches[0].clientX : e.clientX;
           const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-          const x = (window.innerWidth / 2 - clientX) / 35;
-          const y = (window.innerHeight / 2 - clientY) / 35;
+          targetX = (window.innerWidth / 2 - clientX) / 25;
+          targetY = (window.innerHeight / 2 - clientY) / 25;
+      }
 
+      // 3. 统一动画渲染渲染 (平滑滤波)
+      function updateFrame() {
+          curX += (targetX - curX) * 0.1;
+          curY += (targetY - curY) * 0.1;
+
+          const transformStr = `translate(-50%, -50%) rotateY(${curX}deg) rotateX(${-curY}deg)`;
+          
           if (id5Card.classList.contains('active')) {
-              id5Card.style.transform = `translate(-50%, -50%) rotateY(${-x}deg) rotateX(${y}deg)`;
+              id5Card.style.transform = transformStr + ` scale(1)`;
+          } else if (mainUI.style.opacity !== "0") {
+              mainUI.style.transform = transformStr;
           }
-          if (mainUI.style.opacity !== "0") {
-              mainUI.style.transform = `translate(-50%, -50%) rotateY(${-x}deg) rotateX(${y}deg)`;
-          }
+          requestAnimationFrame(updateFrame);
       }
-      
-      function resetMove() {
-          id5Card.style.transform = `translate(-50%, -50%) scale(1) rotateX(0) rotateY(0)`;
-          mainUI.style.transform = `translate(-50%, -50%) rotateX(0) rotateY(0)`;
-      }
+      updateFrame();
 
       window.addEventListener('mousemove', handleMove);
       window.addEventListener('touchmove', handleMove);
-      window.addEventListener('touchend', resetMove);
 
       function startTypewriter() {
-          // 这里使用标准的中文文本，确保脚本执行时无编码干扰
           const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！";
           typewriterContent.innerHTML = "";
           let i = 0;
@@ -248,9 +277,7 @@
               if (now - lastClickTime > 2000) clickCount = 0;
               clickCount++;
               lastClickTime = now;
-
               btn.style.filter = `brightness(${1 + clickCount * 0.1}) blur(${clickCount * 0.1}px)`;
-              
               if(clickCount >= 5) {
                   mainUI.style.opacity = "0";
                   mainUI.style.filter = "blur(10px)";
