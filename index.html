@@ -13,12 +13,8 @@
 
     /* 视频背景 */
     #video-bg {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        object-fit: cover;
-        z-index: 1;
-        filter: brightness(0.5) contrast(1.1);
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: 1; filter: brightness(0.5) contrast(1.1);
     }
 
     /* 启动遮罩 */
@@ -28,26 +24,20 @@
         display: flex; justify-content: center; align-items: center;
         color: white; cursor: pointer; backdrop-filter: blur(10px);
         font-size: 1.4rem; text-align: center; padding: 20px;
-        line-height: 1.6;
     }
 
-    /* 主界面文字块 3D */
+    /* 主界面 3D */
     .birthday-message {
-      position: absolute; top: 50%; left: 50%; 
-      transform: translate(-50%, -50%);
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center; color: white; z-index: 100; width: 100%;
-      pointer-events: none; 
-      transition: opacity 0.5s, filter 0.5s, transform 0.1s ease-out;
+      pointer-events: none; transition: opacity 0.5s, transform 0.1s ease-out;
       transform-style: preserve-3d;
     }
     
     .interactive-text { 
       pointer-events: auto; cursor: pointer; user-select: none; 
-      -webkit-user-select: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      display: block; width: fit-content; margin: 0 auto;
-      transform: translateZ(50px);
+      display: block; width: fit-content; margin: 0 auto; transform: translateZ(50px);
     }
-    .interactive-text:active { transform: translateZ(20px) scale(0.9); filter: brightness(1.3); }
 
     .name-a {
       font-family: 'Dancing Script', cursive; font-size: clamp(3rem, 12vw, 7rem);
@@ -55,88 +45,44 @@
       -webkit-background-clip: text; background-clip: text; color: transparent;
       text-shadow: 0 0 30px rgba(255, 179, 217, 0.5); margin-bottom: 10px;
     }
-    .birthday-text {
-      font-size: clamp(1.6rem, 7vw, 3rem); font-weight: 600;
-      color: #fff5e6; text-shadow: 0 0 20px #ff99cc;
-      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
-      display: inline-block; padding: 10px 30px; border-radius: 50px;
-      border: 1px solid rgba(255, 215, 245, 0.4);
-    }
 
-    /* 粒子星星 */
-    .spark {
-      position: fixed; pointer-events: none; z-index: 2000;
-      background: #fff; border-radius: 50%;
-      box-shadow: 0 0 10px #ffd137;
-      animation: spark-fly 0.7s ease-out forwards;
-    }
-    @keyframes spark-fly {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-
-    /* 稀世卡片 3D */
+    /* 稀世卡片 */
     #id5-card {
-      position: fixed; top: 50%; left: 50%; 
-      transform-origin: center;
-      transform: translate(-50%, -50%) scale(0.8);
-      width: 90%; max-width: 350px; 
-      height: 75vh; max-height: 550px;
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+      width: 90%; max-width: 350px; height: 75vh; max-height: 550px;
       background: linear-gradient(145deg, #1a1a1c, #0a0a0b); 
       border: 2px solid #d4af37; border-radius: 18px; 
       z-index: 1000; opacity: 0; pointer-events: none;
       transition: opacity 0.6s, transform 0.1s ease-out;
       display: flex; flex-direction: column; align-items: center;
       box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
-      padding: 30px 20px; color: #f0f0f0; text-align: center;
-      transform-style: preserve-3d;
+      padding: 30px 20px; color: #f0f0f0; transform-style: preserve-3d;
     }
     #id5-card.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
-    .rarity-tag {
-      background: linear-gradient(90deg, #d4af37, #f7e695); color: #1a1a1a;
-      font-weight: 800; padding: 4px 18px; font-size: 0.8rem;
-      position: absolute; top: 15px; left: -10px; transform: rotate(-5deg) translateZ(30px);
-    }
-    .skin-title { margin-top: 25px; color: #d4af37; font-size: 1.7rem; font-weight: bold; transform: translateZ(40px); }
-    .skin-icon { font-size: 3.5rem; margin: 10px 0; transform: translateZ(50px); }
-    
     .skin-desc { 
-      flex: 1; width: 100%; overflow-y: auto;
-      font-size: 0.9rem; line-height: 1.6; color: #ececec; 
+      flex: 1; width: 100%; overflow-y: auto; font-size: 0.95rem; line-height: 1.7;
       background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px;
       margin: 10px 0; text-align: left; border-left: 3px solid #d4af37;
-      scrollbar-width: none; transform: translateZ(20px);
+      scrollbar-width: none;
     }
-    .skin-desc::-webkit-scrollbar { display: none; }
 
-    /* 醒目文字样式：无背景，金色呼吸灯 */
     .final-call {
-      display: block;
-      margin-top: 12px;
-      color: #ffd700;
-      font-weight: bold;
+      display: block; margin-top: 15px; color: #ffd700; font-weight: bold;
       text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
       animation: soft-glow 2s infinite ease-in-out;
     }
-    @keyframes soft-glow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
+    @keyframes soft-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-    .btn-group { width: 100%; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; transform: translateZ(30px); }
-    .back-btn {
-      width: 100%; padding: 12px; background: #d4af37; border: none;
-      color: #1a1a1a; border-radius: 25px; font-weight: bold; cursor: pointer;
+    .spark {
+      position: fixed; pointer-events: none; z-index: 2000; background: #fff;
+      border-radius: 50%; box-shadow: 0 0 10px #ffd137;
+      animation: spark-fly 0.7s ease-out forwards;
     }
-    .zk-mini-card {
-      width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.08);
-      border: 1px dashed rgba(212, 175, 55, 0.5); border-radius: 15px;
-      color: #d4af37; text-decoration: none; font-size: 0.8rem;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+    @keyframes spark-fly {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
     }
-
-    .footer-note { position: absolute; bottom: 15px; right: 20px; color: rgba(255, 255, 255, 0.3); font-size: 0.75rem; z-index: 10; }
   </style>
 </head>
 <body>
@@ -149,33 +95,19 @@
     <source src="https://raw.githubusercontent.com/yangkz1208/yangtianlin/main/114514.mp3" type="audio/mpeg">
   </audio>
   
-  <div id="start-overlay">
-      <div>
-          ✨ 点击开启生日惊喜 ✨<br>
-          <small style="font-size: 0.8rem; opacity: 0.7;">( 连点“杨天琳”有稀世惊喜 )</small>
-      </div>
-  </div>
+  <div id="start-overlay">✨ 点击开启生日惊喜 ✨</div>
 
   <div class="birthday-message" id="main-ui">
     <div class="name-a interactive-text trigger-egg">杨天琳(/^▽^)/</div>
-    <div class="birthday-text interactive-text trigger-egg">生日快乐</div>
-    <div style="margin-top:20px; font-size:1.1rem; color:#fbeaff; opacity:0.6; letter-spacing: 5px; transform: translateZ(30px);">✨ HAPPY BIRTHDAY ✨</div>
+    <div style="font-size: 1.8rem; color: #fff; font-weight: 600;">HAPPY BIRTHDAY</div>
   </div>
 
   <div id="id5-card">
-    <div class="rarity-tag">稀世 (S-Rank)</div>
-    <div class="skin-title">永恒光辉</div>
-    <div class="skin-icon">🕯️</div>
+    <div style="background: #d4af37; color: #000; padding: 2px 10px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px;">稀世时装</div>
+    <div style="color: #d4af37; font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">永恒光辉</div>
     <div class="skin-desc" id="typewriter-content"></div>
-    <div class="btn-group">
-        <button class="back-btn" id="close-card">收下时装</button>
-        <a href="https://yangkz1208.github.io/zk" class="zk-mini-card" target="_blank">
-            <span>🎁 中考倒计时（我建的！） ➔</span>
-        </a>
-    </div>
+    <button onclick="location.reload()" style="padding: 10px 30px; border-radius: 20px; background: #d4af37; border: none; font-weight: bold; cursor: pointer;">收下祝福</button>
   </div>
-
-  <div class="footer-note">🎈 by 杨凯哲</div>
 
   <script>
     (function(){
@@ -184,133 +116,66 @@
       const video = document.getElementById('video-bg');
       const mainUI = document.getElementById('main-ui');
       const id5Card = document.getElementById('id5-card');
-      const closeBtn = document.getElementById('close-card');
-      const triggerBtns = document.querySelectorAll('.trigger-egg');
+      const triggerBtn = document.querySelector('.trigger-egg');
       const typewriterContent = document.getElementById('typewriter-content');
       
       let clickCount = 0;
-      let lastClickTime = 0;
-      
-      let curX = 0, curY = 0;
       let targetX = 0, targetY = 0;
+      let curX = 0, curY = 0;
 
       overlay.addEventListener('click', () => {
           audio.play().catch(() => {});
-          if(video) video.play();
-          
+          video.play();
           if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
               DeviceOrientationEvent.requestPermission().then(state => {
-                  if (state === 'granted') window.addEventListener('deviceorientation', handleGyro);
-              }).catch(console.error);
-          } else {
-              window.addEventListener('deviceorientation', handleGyro);
+                  if (state === 'granted') window.addEventListener('deviceorientation', e => {
+                      targetX = e.gamma / 1.5;
+                      targetY = (e.beta - 45) / 1.5;
+                  });
+              });
           }
-
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.style.display = 'none', 500);
+          overlay.style.display = 'none';
       });
-
-      function handleGyro(e) {
-          let x = e.gamma / 1.5; 
-          let y = (e.beta - 45) / 1.5; 
-          targetX = Math.max(Math.min(x, 20), -20);
-          targetY = Math.max(Math.min(y, 20), -20);
-      }
-
-      function handleMove(e) {
-          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-          targetX = (window.innerWidth / 2 - clientX) / 25;
-          targetY = (window.innerHeight / 2 - clientY) / 25;
-      }
 
       function updateFrame() {
           curX += (targetX - curX) * 0.1;
           curY += (targetY - curY) * 0.1;
-          const transformStr = `translate(-50%, -50%) rotateY(${curX}deg) rotateX(${-curY}deg)`;
-          
-          if (id5Card.classList.contains('active')) {
-              id5Card.style.transform = transformStr + ` scale(1)`;
-          } else if (mainUI.style.opacity !== "0") {
-              mainUI.style.transform = transformStr;
-          }
+          const style = `translate(-50%, -50%) rotateY(${curX}deg) rotateX(${-curY}deg)`;
+          if(id5Card.classList.contains('active')) id5Card.style.transform = style + " scale(1)";
+          else mainUI.style.transform = style;
           requestAnimationFrame(updateFrame);
       }
       updateFrame();
 
-      window.addEventListener('mousemove', handleMove);
-      window.addEventListener('touchmove', handleMove);
+      triggerBtn.addEventListener('click', (e) => {
+          clickCount++;
+          if(clickCount >= 5) {
+              mainUI.style.opacity = "0";
+              id5Card.classList.add('active');
+              startTypewriter();
+          }
+      });
 
       function startTypewriter() {
-          const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity: 0.1; margin: 8px 0;'><small style='color: #d4af37;'>YKZ特别备注：</small><br>给你建网站累死了，现在是4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！<br><span class='final-call'>给我说：我听见了生生不息的回响，获得生日礼物 (doge)</span>";
+          // 修复后的纯净文案
+          const text = "愿你在奔跑的年纪里，眼里有光，心中有火。<br>不管世界如何喧嚣，你永远是你最耀眼的自己。<br>🌸 祝你岁岁年年，万事胜意 🌸<br><hr style='opacity:0.2;margin:10px 0;'><small style='color:#d4af37'>YKZ 特别备注：</small><br>给你建网站累死了，现在是 4.25，你有许多“好看”的照片在我这(😏)，中考后记得加微信，不然我就上门服务了！<br><span class='final-call'>给我说：我听见了生生不息的回响，获得生日礼物 (doge)</span>";
           
-          typewriterContent.innerHTML = "";
           let i = 0;
           const timer = setInterval(() => {
               if (text[i] === '<') {
-                  let tagEnd = text.indexOf('>', i);
-                  typewriterContent.innerHTML += text.substring(i, tagEnd + 1);
-                  i = tagEnd + 1;
+                  let end = text.indexOf('>', i);
+                  typewriterContent.innerHTML += text.substring(i, end + 1);
+                  i = end + 1;
               } else {
-                  typewriterContent.innerHTML += text[i];
+                  typewriterContent.innerHTML += text[i] || "";
                   i++;
               }
               if (i >= text.length) {
                   clearInterval(timer);
                   typewriterContent.scrollTop = typewriterContent.scrollHeight;
               }
-          }, 40);
+          }, 45);
       }
-
-      function createSparks(x, y) {
-          for (let i = 0; i < 8; i++) {
-              const spark = document.createElement('div');
-              spark.className = 'spark';
-              const size = Math.random() * 5 + 2;
-              spark.style.width = size + 'px'; spark.style.height = size + 'px';
-              spark.style.left = x + 'px'; spark.style.top = y + 'px';
-              const angle = Math.random() * Math.PI * 2;
-              const velocity = 50 + Math.random() * 80;
-              spark.style.setProperty('--tx', `${Math.cos(angle) * velocity}px`);
-              spark.style.setProperty('--ty', `${Math.sin(angle) * velocity}px`);
-              document.body.appendChild(spark);
-              setTimeout(() => spark.remove(), 700);
-          }
-      }
-
-      triggerBtns.forEach(btn => {
-          btn.addEventListener('mousedown', (e) => {
-              createSparks(e.clientX, e.clientY);
-              const now = Date.now();
-              if (now - lastClickTime > 2000) clickCount = 0;
-              clickCount++;
-              lastClickTime = now;
-              btn.style.filter = `brightness(${1 + clickCount * 0.1}) blur(${clickCount * 0.1}px)`;
-              
-              if(clickCount >= 5) {
-                  mainUI.style.opacity = "0";
-                  mainUI.style.filter = "blur(10px)";
-                  setTimeout(() => { 
-                      id5Card.classList.add('active'); 
-                      startTypewriter(); 
-                  }, 400);
-              }
-          });
-          btn.addEventListener('touchstart', (e) => {
-              createSparks(e.touches[0].clientX, e.touches[0].clientY);
-          });
-      });
-
-      closeBtn.addEventListener('click', () => {
-          id5Card.classList.remove('active');
-          setTimeout(() => {
-              mainUI.style.opacity = "1";
-              mainUI.style.filter = "blur(0)";
-              clickCount = 0;
-              typewriterContent.innerHTML = "";
-              triggerBtns.forEach(b => { b.style.filter = ''; });
-          }, 400);
-      });
     })();
   </script>
 </body>
